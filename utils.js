@@ -33,6 +33,20 @@ export const SECTION_LIST_MOCK_DATA = [
   },
 ];
 
+const groupBy = (input, key) => {
+  return input.reduce((acc, currentValue) => {
+    let groupKey = currentValue[key];
+
+    if (!acc[groupKey]) {
+      acc[groupKey] = [];
+    }
+
+    acc[groupKey].push(currentValue);
+
+    return acc;
+  }, {});
+};
+
 /**
  * 3. Implement this function to transform the raw data
  * retrieved by the getMenuItems() function inside the database.js file
@@ -40,12 +54,11 @@ export const SECTION_LIST_MOCK_DATA = [
  * @see https://reactnative.dev/docs/sectionlist as a reference
  */
 export function getSectionListData(data) {
-  data.group((item) => item.category);
-  // SECTION_LIST_MOCK_DATA is an example of the data structure you need to return from this function.
-  // The title of each section should be the category.
-  // The data property should contain an array of menu items.
-  // Each item has the following properties: "id", "title" and "price"
-  return SECTION_LIST_MOCK_DATA;
+  const grouppedMenu = groupBy(data, "category");
+
+  return Object.entries(grouppedMenu).map(([category, data]) => {
+    return { title: category, data: data };
+  });
 }
 
 export function useUpdateEffect(effect, dependencies = []) {
